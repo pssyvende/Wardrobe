@@ -1,0 +1,152 @@
+﻿@page "{id:int?}"
+@model Wardrobe.Pages.ItemDetailsModel
+@{
+}
+<div class="container">
+    <div class="details row m-0 p-0">
+        <div class="col-md-7 col-lg-6 order-1 order-md-0">
+            <div id="carousel" class="carousel slide d-none d-md-block" data-ride="carousel">
+                <div class="carousel-inner">
+                    @{
+                        int counter = 0;
+                    }
+                    @foreach (var photo in Model.ItemProp.Photos)
+                    {
+
+                        if (counter == 0)
+                        {
+                            <div class="carousel-item active">
+                                <img class="d-block img-fluid" src="@photo.Source">
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="carousel-item">
+                                <img class="d-block img-fluid" src="@photo.Source">
+                            </div>
+                        }
+                        counter++;
+                    }
+                </div>
+                <a class="carousel-control-prev" href="#carousel" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </a>
+                <a class="carousel-control-next" href="#carousel" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                </a>
+            </div>
+            <div class="d-md-none mb-3">
+                @foreach (var photo in Model.ItemProp.Photos)
+                {
+                    <div class="m-0 p-0">
+                        <img class="d-block img-fluid" src="@photo.Source">
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-md-5 col-lg-6 text-center pt-5 order-0 order-md-1">
+            <div class="admin mb-2">
+                <a asp-page="./ItemEdit" asp-route-id="@Model.ItemProp.ItemPropID" class="p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
+                        <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" />
+                        <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z" />
+                    </svg>
+                </a>
+                <!--delete icon-->
+                <a href="#" class="p-1" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                        <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+                    </svg>
+                </a>
+                <!--delete modal -->
+                <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content rounded-0">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to delete this?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light border-0 rounded-0 " data-bs-dismiss="modal">Close</button>
+                                <form method="post">
+                                    <input type="hidden" asp-for="ItemProp.ItemPropID" />
+                                    <input type="submit" value="Save changes" class="btn mx-3 border-0 rounded-0 btn-dark text-uppercase" />
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h6>@Html.DisplayFor(model => model.ItemProp.Item.Name)</h6>
+            <h3 class="mt-2 mb-4">@Html.DisplayFor(model => model.ItemProp.Price) GBP</h3>
+            <section>
+                <p class="mb-1 text-center">Colour</p>
+                <div class="d-flex justify-content-center">
+                    @foreach (var item in Model.ItemProps)
+                    {
+                        @if (item.ItemPropID == Model.ItemProp.ItemPropID)
+                        {
+                            <a asp-page="./ItemDetails" asp-route-id="@item.ItemPropID" class="m-2" style="border: 1px solid black">
+                                <div class="m-1" style="width: 20px; height: 20px; background: @item.Color;"></div>
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-page="./ItemDetails" asp-route-id="@item.ItemPropID" class="m-2">
+                                <div class="m-1" style="width: 20px; height: 20px; background: @item.Color;"></div>
+                            </a>
+                        }
+
+                    }
+                </div>
+            </section>
+            <section class="w-50 m-auto my-2">
+                <p class="mb-1 text-center">Size</p>
+                <form id="selectSize" method="post">
+                    <div class="mb-3">
+                        <select class="form-select form-select-sm" aria-label=".form-select-sm example" onchange="send(this)">
+                            <option value="" disabled selected>Select your size</option>
+                            @for (int i = 36; i < 43; i++)
+                            {
+                                @if (Model.ItemProp.ItemSizes.Any(x => x.Size == i))
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                                else
+                                {
+                                    <option disabled value="@i">@i</option>
+                                }
+
+                            }
+                        </select>
+                    </div>
+                    <a role="button" type="submit" asp-page="bag" asp-page-handler="buynow" asp-route-orderLevel="1" asp-route-id="@Model.ItemProp.ItemPropID" asp-route-name="@Model.ItemProp.Item.Name" asp-route-price="@decimal.ToDouble(Model.ItemProp.Price)" asp-route-photo="@Model.ItemProp.Photos.ElementAt(1).Source" asp-route-size="0" class="btn px-3 py-2 my-3 border-0 rounded-0 text-uppercase disabled">Add to bag</a>
+                </form>
+
+
+
+            </section>
+
+            <div class="accordion m-5" id="accordionExample">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            Description
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            @Html.DisplayFor(model => model.ItemProp.Item.Description)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>

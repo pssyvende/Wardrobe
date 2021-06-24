@@ -1,0 +1,177 @@
+﻿@page "{orderLevel:int?}"
+@model Wardrobe.Pages.BagModel
+@{
+    ViewData["Title"] = "My Bag";
+}
+
+@if (Model.OrderLevel == 2 && BagModel.IsEmpty == true)
+{
+    <div class="container">
+        <h1 class="text-uppercase text-center pt-5 mb-5">Details and Submit</h1>
+        <div class="row m-0">
+            <div class="col-lg-7 py-3">
+                <div class="container">
+                    <form method="post" asp-page-handler="order">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email address*</label>
+                            <input type="email" class="form-control rounded-0" id="email" name="email" aria-describedby="emailHelp" required>
+                            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12 col-sm-6">
+                                <label for="firstName" class="form-label">First Name*</label>
+                                <input type="text" pattern="[A-Za-z]{1,50}" class="form-control rounded-0" id="firstName" name="firstName" required>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label for="lastName" class="form-label">Last Name*</label>
+                                <input type="text" pattern="[A-Za-z]{1,50}" class="form-control rounded-0" id="lastName" name="lastName" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="telephoneNumber" class="form-label">Telephone Number*</label>
+                            <input type="tel" pattern="\d{9,15}" class="form-control rounded-0" id="telephoneNumber" name="telephoneNumber" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="streetName" class="form-label">Street Name*</label>
+                            <input type="text" pattern="[A-Za-z]{1,50}" class="form-control rounded-0" id="streetName" name="streetName" required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12 col-sm-6">
+                                <label for="houseNumber" class="form-label">House Number*</label>
+                                <input type="text" pattern="\d{0,10}([A-z]|[a-z]){0,5}" class="form-control rounded-0" id="houseNumber" name="houseNumber" required>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label for="apartmentNumber" class="form-label">Apartment Number</label>
+                                <input type="text" pattern="\d{0,10}" class="form-control rounded-0" id="apartmentNumber" name="apartmentNumber">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12 col-sm-6">
+                                <label for="postal" class="form-label">Postal*</label>
+                                <input type="text" pattern="\d{2}-\d{3}" placeholder="xx-xxx" class="form-control rounded-0" id="postal" name="postal" required>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label for="city" class="form-label">City*</label>
+                                <input type="text" pattern="[A-Za-z]{1,50}" class="form-control rounded-0" id="city" name="city" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="details" class="form-label">Details</label>
+                            <textarea class="form-control rounded-0" id="details" name="details"></textarea>
+                        </div>
+                        <div class="m-0 p-0 text-center text-sm-start">
+                            <button type="submit" class="btn btn-dark rounded-0 text-uppercase">Order Products</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+            <div class="col-lg-5 text-center order-lg-1 order-0 px-3 mt-5 mt-lg-0">
+                <h1 style="font-family: LaBelle">Summary</h1>
+                <div class="container">
+                    @foreach (var item in Model.bag)
+                    {
+                        <div class="row px-5 px-sm-3 py-2">
+                            <div class="col-12 col-sm-8 pt-2 py-sm-0 my-auto px-3 text-start order-1 order-sm-0">
+                                <h4>@item.Product.Name</h4>
+                                <h6>@item.Quantity x @item.Product.Price GPB</h6>
+                                <p>Size: @item.Product.Size</p>
+                            </div>
+                            <div class="col-12 col-sm-4 my-auto p-0 order-0 order-sm-1">
+                                <img src="@item.Product.Photo" class="img-fluid" />
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="row m-5 pt-3 mb-0 border-top">
+                    <div class="col text-start">
+                        <h6 class="text-uppercase">Products' Price</h6>
+                    </div>
+                    <div class="col text-end">
+                        <p>@Model.Total</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else if (BagModel.IsEmpty == true)
+{
+    <div class="container">
+        <h1 class="text-uppercase text-center pt-5 mb-5">Products' List</h1>
+        <div class="row">
+            <div class="col-lg-8 py-lg-3 px-lg-5 order-lg-0 order-1">
+                <form method="post" asp-page="bag" asp-page-handler="update" class="productList">
+                    <input type="hidden" value="Update" />
+                    @foreach (var item in Model.bag)
+                    {
+                        <div class="row m-5">
+                            <div class="col-md-4 mr-0 p-0">
+                                <img src="@item.Product.Photo" class="img-fluid" />
+                            </div>
+                            <div class="col-md-8 px-3 my-2 my-md-auto">
+                                <div class="row">
+                                    <div class="col-12 col-sm-10 text-md-start order-1 order-sm-0">
+                                        <h4>@item.Product.Name</h4>
+                                        <h6>@item.Product.Price GPB</h6>
+                                        <p>Size: @item.Product.Size</p>
+                                    </div>
+                                    <div class="delete col-sm-2 order-0 order-sm-1 text-end">
+                                        <a asp-page="bag" asp-page-handler="delete" asp-route-id="@item.Product.Id">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                                <path d="M1.293 1.293a1 1 0 0 1 1.414 0L8 6.586l5.293-5.293a1 1 0 1 1 1.414 1.414L9.414 8l5.293 5.293a1 1 0 0 1-1.414 1.414L8 9.414l-5.293 5.293a1 1 0 0 1-1.414-1.414L6.586 8 1.293 2.707a1 1 0 0 1 0-1.414z" />
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 col-sm-10 my-2 my-sm-0">
+                                        <input type="number" name="quantities" value="@item.Quantity" min="1" style="width: 50px;" class="rounded-0 border-0" />
+                                        <input type="submit" value="Update" class=" py-1 btn text-uppercase text-white rounded-0" style="background-color: rgba(237,176,176,1)" />
+                                    </div>
+                                    <div class="col-12 col-sm-2 text-sm-end">
+                                        <h6>@Math.Round(item.Product.Price * @item.Quantity, 2) GPB</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </form>
+            </div>
+            <div class="col-lg-4 text-center order-lg-1 order-0 px-3">
+                <h1 style="font-family: LaBelle">Summary</h1>
+                <div class="row px-5">
+                    <div class="col text-start">
+                        <h6 class="text-uppercase">Products' Price</h6>
+                    </div>
+                    <div class="col text-end">
+                        <p>@Model.Total</p>
+                    </div>
+                    <div class="col-12">
+                        <a asp-page="Bag" asp-route-orderLevel="2" class="btn btn-outline-dark text-uppercase rounded-0">Buy Products</a>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container pt-5">
+        <div class="row">
+            <div class="col-md-12 col-lg d-lg-flex text-center justify-content-lg-end">
+                <img src="https://365psd.com/images/istock/previews/9090/90902769-set-of-fashion-models-sketch-vector-illustration.jpg" class="img-fluid" style="opacity: 0.5" />
+            </div>
+            <div class="col-md-12 col-lg d-lg-flex justify-content-center">
+                <div class="align-self-center text-center text-lg-start px-3">
+                    <h3>Your bag is empty</h3>
+                    <h2 class="mb-0 pb-0" style="font-family: LaBelle">It's the perfect time to discover more</h2>
+                    <a asp-page="/All" class="btn btn-light border-0 rounded-0 text-uppercase" role="button">Let's begin</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}

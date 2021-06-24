@@ -1,0 +1,254 @@
+﻿@page "{category?}/{subcategory?}/{sortOrder?}/{min?}/{max?}/{sizes?}"
+@model Wardrobe.Pages.ItemsModel
+@{
+    ViewData["Title"] = "Items";
+}
+<div class="row m-0">
+    <div class="col-md-3 col-lg-2">
+        <div class="categories sticky-top m-3" style="top:80px;">
+            @foreach (var category in Model.ItemCategory.Select(x => x.Category).Distinct())
+            {
+                <div>
+                    <!--reset all parameters-->
+                    <a asp-page="/All" asp-route-category="@category">
+                        @if (Model.CategoryFilter == category)
+                        {
+                            <h6 class="text-uppercase m-0" style="color:#edb0b0">@category</h6>
+                        }
+                        else
+                        {
+                            <h6 class="text-uppercase m-0">@category</h6>
+                        }
+                    </a>
+                    <ul class="list-unstyled mb-3">
+                        @foreach (var sub in Model.ItemCategory.Where(i => i.Category == category))
+                        {
+                            @if (Model.SubcategoryFilter == sub.Subcategory)
+                            {
+                                <li><a asp-page="/All" asp-route-category="@category" asp-route-subcategory="@sub.Subcategory" class="px-2" style="background-color: rgba(237,176,176,1)">@sub.Subcategory</a></li>
+                            }
+                            else
+                            {
+                                <li><a asp-page="/All" asp-route-category="@category" asp-route-subcategory="@sub.Subcategory" class="px-2">@sub.Subcategory</a></li>
+                            }
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+
+    </div>
+    <div class="col-md-9 col-lg-10 px-5 ps-md-1 pe-md-4 px-lg-5">
+        @if (Model.SubcategoryFilter == "All items")
+        {
+            <h1 class="text-uppercase text-center pt-5">@Model.CategoryFilter</h1>
+            <h1 class="text-center mb-2" style="font-family: LaBelle">@Model.SubcategoryFilter</h1>
+        }
+        else
+        {
+            <h1 class="text-uppercase text-start text-md-center pt-5">@Model.CategoryFilter</h1>
+            <h1 class="text-center mb-2 d-none d-md-block" style="font-family: LaBelle">@Model.SubcategoryFilter</h1>
+            <div class="accordion m-0 mb-5 d-md-none" id="accordionSubcategories">
+                <div class="accordion-item border-0">
+                    <h2 class="accordion-header border-0" id="subcategoriesHeader">
+                        <button class="accordion-button collapsed bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubcategories" aria-expanded="false" aria-controls="collapseSubcategories">
+                            <h1 class="text-center mb-2" style="font-family: LaBelle">@Model.SubcategoryFilter</h1>
+                        </button>
+                    </h2>
+                    <div id="collapseSubcategories" class="accordion-collapse collapse" aria-labelledby="subcategoriesHeader" data-bs-parent="#accordionSubcategories">
+                        <div class="accordion-body">
+                            <ul class="list-unstyled mb-3">
+                                <li><a asp-page="/All" asp-route-category="@Model.CategoryFilter" class="px-2">All</a></li>
+
+                                @foreach (var sub in Model.ItemCategory.Where(i => i.Category == Model.CategoryFilter))
+                                {
+                                    <li><a asp-page="/All" asp-route-category="@Model.CategoryFilter" asp-route-subcategory="@sub.Subcategory" class="px-2">@sub.Subcategory</a></li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+
+
+        <!-- filters -->
+        <div class="container-fluid filters d-block d-sm-inline-flex justify-content-between mb-5 my-sm-3 p-0">
+            <div class="flex-sm-grow-1 d-block d-sm-inline-flex">
+                <!--sort by-->
+                <div class="sortOrder dropdown m-0 p-0">
+                    <button class="btn btn-dark rounded-0 dropdown-toggle text-uppercase" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Sort by
+                    </button>
+                    <div class="dropdown-menu rounded-0" aria-labelledby="dropdownMenuButton">
+                        <form>
+                            @if (Model.MinValue != 0)
+                            {
+                                <input type="hidden" name="min" value="@Model.MinValue">
+                            }
+                            @if (Model.MaxValue != 0)
+                            {
+                                <input type="hidden" name="max" value="@Model.MaxValue">
+                            }
+                            @for (int s = 36, i = 1; s < 43; s++, i++)
+                            {
+                                @if (Model.SizesValues.Contains(@s))
+                                {
+                                    <input type="hidden" name="sizes" value="@s">
+
+                                }
+                            }
+                            @{
+                                string[] order = { "price", "price_desc", "newest", "default" };
+                                string[] orderDesc = { "Price ascending", "Price descending", "Newest", "Default order" };
+                                for (int i = 1; i < 5; i++)
+                                {
+                                    <div class="form-check w-75 mx-auto my-1">
+                                        @if (Model.SortOrderValue == order[i - 1])
+                                        {
+                                            <input class="form-check-input" type="radio" name="sortOrder" value="@order[i-1]" id="@(new String("order" + @i))" checked="checked">
+
+                                        }
+                                        else
+                                        {
+                                            <input class="form-check-input" type="radio" name="sortOrder" value="@order[i-1]" id="@(new String("order" + @i))">
+
+                                        }
+                                        <label class="form-check-label" for="@(new String("order" + @i))">
+                                            @orderDesc[i - 1]
+                                        </label>
+                                    </div>
+                                }
+                            }
+                            <div class="form-group text-center mt-2">
+                                <input type="submit" value="Filter" class="btn btn-dark rounded-0" />
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+                <!--price-->
+                <div class="price dropdown my-2 my-sm-0 mx-sm-3 p-0">
+                    <button class="btn btn-light rounded-0 dropdown-toggle text-uppercase" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Price
+                    </button>
+                    <div class="dropdown-menu rounded-0" aria-labelledby="dropdownMenuButton2">
+                        <form class="px-2">
+                            @if (!String.IsNullOrEmpty(Model.SortOrderValue))
+                            {
+                                <input type="hidden" name="sortOrder" value="@Model.SortOrderValue">
+                            }
+                            @for (int s = 36, i = 1; s < 43; s++, i++)
+                            {
+                                @if (Model.SizesValues.Contains(@s))
+                                {
+                                    <input type="hidden" name="sizes" value="@s">
+
+                                }
+                            }
+                            <div class="input-group mt-3 mb-3 rounded-0">
+                                <input type="text" class="form-control rounded-0 border-0 border-bottom" placeholder="From" name="min" value="@(Model.MinValue == 0 ? "" : Model.MinValue)">
+                            </div>
+                            <div class="input-group mb-3 rounded-0">
+                                <input type="text" class="form-control rounded-0 border-0 border-bottom pl-2" placeholder="To" name="max" value="@(Model.MaxValue == 0 ? "" : Model.MaxValue)">
+                            </div>
+                            <div class="form-group text-center">
+                                <input type="submit" value="Filter" class="btn btn-dark rounded-0" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!--size-->
+                <div class="size dropdown my-2 my-sm-0 mr-sm-3 p-0 ">
+                    <button class="btn btn-light rounded-0 dropdown-toggle text-uppercase" type="button" id="dropdownMenuButton3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Size
+                    </button>
+                    <div class="dropdown-menu rounded-0" aria-labelledby="dropdownMenuButton3">
+                        <form>
+                            @if (!String.IsNullOrEmpty(Model.SortOrderValue))
+                            {
+                                <input type="hidden" name="sortOrder" value="@Model.SortOrderValue">
+                            }
+                            @if (Model.MinValue != 0)
+                            {
+                                <input type="hidden" name="min" value="@Model.MinValue">
+                            }
+                            @if (Model.MaxValue != 0)
+                            {
+                                <input type="hidden" name="max" value="@Model.MaxValue">
+                            }
+                            @for (int s = 36, i = 1; s < 43; s++, i++)
+                            {
+                                <div class="form-check w-75 mx-auto my-1">
+                                    @if (Model.SizesValues.Contains(@s))
+                                    {
+                                        <input class="form-check-input" type="checkbox" name="sizes" value="@s" id="@(new String("size" + @i))" checked="checked">
+
+                                    }
+                                    else
+                                    {
+                                        <input class="form-check-input" type="checkbox" name="sizes" value="@s" id="@(new String("size" + @i))">
+
+                                    }
+                                    <label class="form-check-label" for="@(new String("size" + @i))">
+                                        @s
+                                    </label>
+                                </div>
+                            }
+                            <div class="form-group text-center mt-2">
+                                <input type="submit" value="Filter" class="btn btn-dark rounded-0" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="d-block d-sm-inline-flex">
+                <aside class="px-2 text-end text-sm-center">
+                    <span>@Model.Counter</span>
+                </aside>
+                <aside class="d-none d-sm-block">
+                    <span class="px-2">View:</span>
+                    <div class="form-check form-check-inline d-lg-none">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="1">
+                        <label class="form-check-label" for="inlineRadio1">1</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="2">
+                        <label class="form-check-label" for="inlineRadio2">2</label>
+                    </div>
+                    <div class="form-check form-check-inline d-none d-lg-inline-block">
+                        <input class="form-check-input" checked="checked" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="3">
+                        <label class="form-check-label" for="inlineRadio3">3</label>
+                    </div>
+                    <div class="form-check form-check-inline d-none d-xxl-inline-block">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4" value="4">
+                        <label class="form-check-label" for="inlineRadio4">4</label>
+                    </div>
+                </aside>
+            </div>
+
+        </div>
+
+
+
+        <div class="items row" style="box-sizing: border-box;">
+            @foreach (var item in Model.ItemAllElements)
+            {
+                <div class="items-details col-sm-6 col-lg-4 col-xxl-3 text-center">
+                    <a asp-page="./ItemDetails" asp-route-id="@item.ID">
+                        <img class="img-fluid" src="@item.Photo" />
+                        <div class="mt-2 mb-5">
+                            <h4>@item.Name</h4>
+                            <h6 class="encourage">@item.Price GBP</h6>
+                        </div>
+
+                    </a>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+<script src="~/js/ratios.js" asp-append-version="true"></script>
